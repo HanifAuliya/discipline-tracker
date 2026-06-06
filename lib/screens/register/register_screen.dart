@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
 
+import '../../models/user_model.dart';
+import '../../services/auth_service.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -25,7 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final bodyFatController = TextEditingController();
 
-  void register() {
+  Future<void> register() async {
     if (nameController.text.trim().isEmpty) {
       showMessage("Nama wajib diisi");
       return;
@@ -41,14 +44,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    debugPrint("Nama : ${nameController.text}");
-    debugPrint("Email : ${emailController.text}");
-    debugPrint("Umur : ${ageController.text}");
-    debugPrint("Tinggi : ${heightController.text}");
-    debugPrint("Berat : ${weightController.text}");
-    debugPrint("Target BF : ${bodyFatController.text}");
+    final user = UserModel(
+      name: nameController.text,
+      email: emailController.text,
+      age: int.tryParse(ageController.text) ?? 0,
+      height: double.tryParse(heightController.text) ?? 0,
+      startWeight: double.tryParse(weightController.text) ?? 0,
+      targetBodyFat: double.tryParse(bodyFatController.text) ?? 0,
+    );
 
-    showMessage("Register berhasil (dummy)");
+    await AuthService().register(user, passwordController.text);
   }
 
   void showMessage(String message) {

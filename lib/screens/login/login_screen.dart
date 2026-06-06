@@ -7,6 +7,8 @@ import '../../widgets/custom_textfield.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../register/register_screen.dart';
 
+import '../../services/auth_service.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -18,24 +20,39 @@ class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void login() {
-    if (emailController.text.trim().isEmpty) {
+  bool isLoading = false; // ← pindah ke sini
+
+  Future<void> login() async {
+    // ← ubah jadi async
+    if (emailController.text.isEmpty) {
       showMessage("Email wajib diisi");
       return;
     }
 
-    if (passwordController.text.trim().isEmpty) {
+    if (passwordController.text.isEmpty) {
       showMessage("Password wajib diisi");
       return;
     }
 
-    debugPrint("Email : ${emailController.text}");
-    debugPrint("Password : ${passwordController.text}");
+    setState(() {
+      isLoading = true;
+    });
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const DashboardScreen()),
+    final success = await AuthService().login(
+      email: emailController.text,
+      password: passwordController.text,
     );
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const DashboardScreen()),
+      );
+    }
   }
 
   void showMessage(String message) {
@@ -68,9 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const SizedBox(height: 30),
-
                         const AppLogo(),
-
                         const SizedBox(height: 40),
 
                         CustomTextField(
@@ -90,7 +105,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 24),
 
-                        CustomButton(text: "Login", onPressed: login),
+                        isLoading
+                            ? const CircularProgressIndicator()
+                            : CustomButton(text: "Login", onPressed: login),
 
                         const SizedBox(height: 20),
 
@@ -98,7 +115,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text("Belum punya akun?"),
-
                             TextButton(
                               onPressed: () {
                                 Navigator.push(
