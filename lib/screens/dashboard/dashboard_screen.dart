@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/weight_service.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -23,6 +24,30 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final weightService = WeightService();
+
+    const currentWeight = 74.0;
+
+    const height = 170.0;
+
+    const targetBodyFat = 15.0;
+
+    final bmi = weightService.calculateBMI(
+      weight: currentWeight,
+      height: height,
+    );
+
+    final targetWeight = weightService.calculateTargetWeight(
+      currentWeight: currentWeight,
+      targetBodyFat: targetBodyFat,
+    );
+
+    final remaining = weightService.calculateRemainingWeight(
+      currentWeight: currentWeight,
+      targetWeight: targetWeight,
+    );
+
+    final weeks = weightService.estimateWeeks(remainingWeight: remaining);
     return Scaffold(
       appBar: AppBar(title: const Text("Dashboard")),
       body: Padding(
@@ -41,6 +66,15 @@ class DashboardScreen extends StatelessWidget {
             buildCard("Berat Saat Ini", "74 kg"),
 
             buildCard("Target Body Fat", "15 %"),
+
+            // ← tambahkan 4 card ini di sini
+            buildCard("BMI Saat Ini", bmi.toStringAsFixed(1)),
+
+            buildCard("Target Berat", "${targetWeight.toStringAsFixed(1)} kg"),
+
+            buildCard("Sisa Turun", "${remaining.toStringAsFixed(1)} kg"),
+
+            buildCard("Estimasi", "$weeks Minggu"),
 
             const SizedBox(height: 20),
 
