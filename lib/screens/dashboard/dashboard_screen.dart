@@ -3,6 +3,7 @@ import '../../services/weight_service.dart';
 
 import '../weight/weight_screen.dart';
 import '../habits/habit_screen.dart';
+import '../schedule/schedule_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -88,7 +89,15 @@ class DashboardScreen extends StatelessWidget {
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
               children: [
-                Card(child: Center(child: Text("Jadwal"))),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ScheduleScreen()),
+                    );
+                  },
+                  child: const Card(child: Center(child: Text("Jadwal"))),
+                ),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
