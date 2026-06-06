@@ -3,7 +3,13 @@ import '../models/schedule_model.dart';
 class ScheduleService {
   List<ScheduleModel> getDefaultSchedules() {
     return [
-      ScheduleModel(title: "Tahajud", time: "04:00", category: "Ibadah"),
+      ScheduleModel(
+        title: "Tahajud",
+        time: "04:00",
+        category: "Ibadah",
+        reminderMode: ReminderMode.alarm,
+        ringtone: "adzan",
+      ),
 
       ScheduleModel(title: "Qur'an", time: "04:30", category: "Ibadah"),
 
@@ -13,6 +19,7 @@ class ScheduleService {
         title: "Belajar Dicoding",
         time: "07:00",
         category: "Belajar",
+        reminderMode: ReminderMode.notification,
       ),
     ];
   }

@@ -16,7 +16,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   @override
   void initState() {
     super.initState();
-
     schedules = ScheduleService().getDefaultSchedules();
   }
 
@@ -24,6 +23,17 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     setState(() {
       schedules.removeAt(index);
     });
+  }
+
+  IconData getReminderIcon(ReminderMode mode) {
+    switch (mode) {
+      case ReminderMode.silent:
+        return Icons.volume_off;
+      case ReminderMode.notification:
+        return Icons.notifications;
+      case ReminderMode.alarm:
+        return Icons.alarm;
+    }
   }
 
   @override
@@ -38,30 +48,35 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
       body: ListView.builder(
         itemCount: schedules.length,
-
         itemBuilder: (_, index) {
           final item = schedules[index];
 
           return Card(
             child: ListTile(
-              leading: Checkbox(
-                value: item.isDone,
-                onChanged: (value) {
-                  setState(() {
-                    item.isDone = value ?? false;
-                  });
-                },
-              ),
+              leading: Icon(getReminderIcon(item.reminderMode)),
 
               title: Text(item.title),
 
-              subtitle: Text("${item.time} • ${item.category}"),
+              subtitle: Text(
+                "${item.time} • ${item.category} • ${item.reminderMode.name}",
+              ),
 
-              trailing: IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  deleteSchedule(index);
-                },
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Checkbox(
+                    value: item.isDone,
+                    onChanged: (value) {
+                      setState(() {
+                        item.isDone = value ?? false;
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () => deleteSchedule(index),
+                  ),
+                ],
               ),
             ),
           );

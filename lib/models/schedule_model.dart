@@ -1,3 +1,5 @@
+enum ReminderMode { silent, notification, alarm }
+
 class ScheduleModel {
   String title;
 
@@ -7,7 +9,7 @@ class ScheduleModel {
 
   bool isDone;
 
-  bool notificationEnabled;
+  ReminderMode reminderMode;
 
   String ringtone;
 
@@ -16,7 +18,7 @@ class ScheduleModel {
     required this.time,
     required this.category,
     this.isDone = false,
-    this.notificationEnabled = true,
+    this.reminderMode = ReminderMode.notification,
     this.ringtone = "default",
   });
 }
