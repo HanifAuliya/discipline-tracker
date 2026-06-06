@@ -4,6 +4,7 @@ import '../../models/schedule_model.dart';
 import '../../services/schedule_service.dart';
 
 import 'add_schedule_screen.dart';
+import 'edit_schedule_screen.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});
@@ -57,6 +58,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   title: result["title"],
                   category: result["category"],
                   time: result["time"],
+                  reminderMode: result["reminderMode"],
+                  ringtone: result["ringtone"],
                 ),
               );
             });
@@ -72,6 +75,22 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
           return Card(
             child: ListTile(
+              onTap: () async {
+                final updated = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        EditScheduleScreen(schedule: schedules[index]),
+                  ),
+                );
+
+                if (updated != null) {
+                  setState(() {
+                    schedules[index] = updated;
+                  });
+                }
+              },
+
               leading: Icon(getReminderIcon(item.reminderMode)),
 
               title: Text(item.title),
@@ -93,7 +112,51 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete),
-                    onPressed: () => deleteSchedule(index),
+                    onPressed: () async {
+                      final deletedItem = schedules[index];
+
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text("Hapus Jadwal"),
+                            content: Text(
+                              "Yakin ingin menghapus '${deletedItem.title}' ?",
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: const Text("Batal"),
+                              ),
+                              ElevatedButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                child: const Text("Hapus"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+
+                      if (confirm == true) {
+                        setState(() {
+                          schedules.removeAt(index);
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("${deletedItem.title} dihapus"),
+                            action: SnackBarAction(
+                              label: "URUNGKAN",
+                              onPressed: () {
+                                setState(() {
+                                  schedules.insert(index, deletedItem);
+                                });
+                              },
+                            ),
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ],
               ),
