@@ -32,4 +32,12 @@ class WeightService {
   int estimateWeeks({required double remainingWeight}) {
     return (remainingWeight / 0.7).ceil();
   }
+
+  double getLatestWeight(List<double> weights) {
+    if (weights.isEmpty) {
+      return 0;
+    }
+
+    return weights.last;
+  }
 }

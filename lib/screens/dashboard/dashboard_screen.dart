@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/weight_service.dart';
+import '../weight/weight_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -84,11 +85,19 @@ class DashboardScreen extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
-              children: const [
+              children: [
                 Card(child: Center(child: Text("Jadwal"))),
                 Card(child: Center(child: Text("Habit"))),
                 Card(child: Center(child: Text("Workout"))),
-                Card(child: Center(child: Text("Weight"))),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const WeightScreen()),
+                    );
+                  },
+                  child: const Card(child: Center(child: Text("Weight"))),
+                ),
               ],
             ),
           ],
