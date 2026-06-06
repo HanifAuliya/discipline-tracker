@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'config/app_theme.dart';
 import 'screens/login/login_screen.dart';
 
 void main() {
@@ -13,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Discipline Tracker',
-      theme: ThemeData(useMaterial3: true),
+      theme: AppTheme.lightTheme,
       home: const LoginScreen(),
     );
   }
