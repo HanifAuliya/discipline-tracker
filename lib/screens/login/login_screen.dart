@@ -4,11 +4,52 @@ import '../../widgets/app_logo.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
 
-import '../register/register_screen.dart';
 import '../dashboard/dashboard_screen.dart';
+import '../register/register_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  void login() {
+    if (emailController.text.trim().isEmpty) {
+      showMessage("Email wajib diisi");
+      return;
+    }
+
+    if (passwordController.text.trim().isEmpty) {
+      showMessage("Password wajib diisi");
+      return;
+    }
+
+    debugPrint("Email : ${emailController.text}");
+    debugPrint("Password : ${passwordController.text}");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const DashboardScreen()),
+    );
+  }
+
+  void showMessage(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,32 +73,24 @@ class LoginScreen extends StatelessWidget {
 
                         const SizedBox(height: 40),
 
-                        const CustomTextField(
+                        CustomTextField(
                           label: "Email",
                           icon: Icons.email_outlined,
+                          controller: emailController,
                         ),
 
                         const SizedBox(height: 16),
 
-                        const CustomTextField(
+                        CustomTextField(
                           label: "Password",
                           icon: Icons.lock_outline,
+                          controller: passwordController,
                           obscure: true,
                         ),
 
                         const SizedBox(height: 24),
 
-                        CustomButton(
-                          text: "Login",
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const DashboardScreen(),
-                              ),
-                            );
-                          },
-                        ),
+                        CustomButton(text: "Login", onPressed: login),
 
                         const SizedBox(height: 20),
 
@@ -65,6 +98,7 @@ class LoginScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text("Belum punya akun?"),
+
                             TextButton(
                               onPressed: () {
                                 Navigator.push(
