@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../models/schedule_model.dart';
 import '../../services/schedule_service.dart';
 
+import 'add_schedule_screen.dart';
+
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});
 
@@ -42,7 +44,24 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       appBar: AppBar(title: const Text("Jadwal Harian")),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AddScheduleScreen()),
+          );
+
+          if (result != null) {
+            setState(() {
+              schedules.add(
+                ScheduleModel(
+                  title: result["title"],
+                  category: result["category"],
+                  time: result["time"],
+                ),
+              );
+            });
+          }
+        },
         child: const Icon(Icons.add),
       ),
 
