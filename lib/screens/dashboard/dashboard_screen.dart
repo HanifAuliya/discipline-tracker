@@ -89,14 +89,15 @@ class DashboardScreen extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () async {
-                await requestNotificationPermission();
-
+                debugPrint("Tombol ditekan, tunggu 5 detik...");
+                await Future.delayed(const Duration(seconds: 5));
                 await NotificationService.instance.showNotification(
-                  title: 'Tahajud',
-                  body: 'Waktunya Tahajud',
+                  title: "Tes Jadwal",
+                  body: "5 detik lewat",
                 );
+                debugPrint("Notifikasi dikirim");
               },
-              child: const Text('Test Notification'),
+              child: const Text('Test Schedule'),
             ),
 
             const SizedBox(height: 20),
