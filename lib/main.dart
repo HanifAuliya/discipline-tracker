@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'config/app_theme.dart';
 import 'screens/login/login_screen.dart';
+import 'services/notification_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await NotificationService.instance.init();
+
   runApp(const MyApp());
 }
 

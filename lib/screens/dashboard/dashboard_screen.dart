@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../services/weight_service.dart';
 
 import '../weight/weight_screen.dart';
 import '../habits/habit_screen.dart';
 import '../schedule/schedule_screen.dart';
+import '../../services/notification_service.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
+
+  Future<void> requestNotificationPermission() async {
+    final status = await Permission.notification.request();
+    debugPrint("Notification Permission: $status");
+  }
 
   Widget buildCard(String title, String value) {
     return Card(
@@ -79,6 +86,18 @@ class DashboardScreen extends StatelessWidget {
             buildCard("Sisa Turun", "${remaining.toStringAsFixed(1)} kg"),
 
             buildCard("Estimasi", "$weeks Minggu"),
+
+            ElevatedButton(
+              onPressed: () async {
+                await requestNotificationPermission();
+
+                await NotificationService.instance.showNotification(
+                  title: 'Tahajud',
+                  body: 'Waktunya Tahajud',
+                );
+              },
+              child: const Text('Test Notification'),
+            ),
 
             const SizedBox(height: 20),
 
