@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/schedule_model.dart';
 import '../../services/schedule_service.dart';
+import '../../services/storage_service.dart';
 
 import 'add_schedule_screen.dart';
 import 'edit_schedule_screen.dart';
@@ -14,18 +15,19 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-  late List<ScheduleModel> schedules;
+  List<ScheduleModel> schedules = [];
+  final storageService = StorageService();
 
   @override
   void initState() {
     super.initState();
-    schedules = ScheduleService().getDefaultSchedules();
+    loadSchedules();
   }
 
-  void deleteSchedule(int index) {
-    setState(() {
-      schedules.removeAt(index);
-    });
+  Future<void> loadSchedules() async {
+    schedules = await storageService.loadSchedules();
+
+    setState(() {});
   }
 
   IconData getReminderIcon(ReminderMode mode) {
@@ -63,6 +65,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ),
               );
             });
+            await storageService.saveSchedules(schedules);
           }
         },
         child: const Icon(Icons.add),
@@ -74,6 +77,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           final item = schedules[index];
 
           return Card(
+            color: item.isDone ? Colors.green.shade50 : null,
+
             child: ListTile(
               onTap: () async {
                 final updated = await Navigator.push(
@@ -88,15 +93,27 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   setState(() {
                     schedules[index] = updated;
                   });
+                  await storageService.saveSchedules(schedules);
                 }
               },
 
-              leading: Icon(getReminderIcon(item.reminderMode)),
+              leading: Icon(
+                getReminderIcon(item.reminderMode),
+                color: item.isDone ? Colors.green : null,
+              ),
 
-              title: Text(item.title),
+              title: Text(
+                item.title,
+                style: TextStyle(
+                  decoration: item.isDone ? TextDecoration.lineThrough : null,
+
+                  color: item.isDone ? Colors.grey : null,
+                ),
+              ),
 
               subtitle: Text(
                 "${item.time} • ${item.category} • ${item.reminderMode.name}",
+                style: TextStyle(color: item.isDone ? Colors.grey : null),
               ),
 
               trailing: Row(
@@ -104,10 +121,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 children: [
                   Checkbox(
                     value: item.isDone,
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       setState(() {
                         item.isDone = value ?? false;
                       });
+                      await storageService.saveSchedules(schedules);
                     },
                   ),
                   IconButton(
@@ -141,16 +159,18 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                         setState(() {
                           schedules.removeAt(index);
                         });
+                        await storageService.saveSchedules(schedules);
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text("${deletedItem.title} dihapus"),
                             action: SnackBarAction(
                               label: "URUNGKAN",
-                              onPressed: () {
+                              onPressed: () async {
                                 setState(() {
                                   schedules.insert(index, deletedItem);
                                 });
+                                await storageService.saveSchedules(schedules);
                               },
                             ),
                           ),
